@@ -401,3 +401,4 @@ FodyWeavers.xsd
 .Trashes
 ehthumbs.db
 Thumbs.db
+.config/dotnet-tools.json
