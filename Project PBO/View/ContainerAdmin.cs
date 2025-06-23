@@ -36,11 +36,15 @@ namespace Project_PBO.View
                 UpdateMenuAccess();
                 SetGreeting();
             }
+
+            btnDashboard_Click(null, EventArgs.Empty);
+
+            cardApp.Padding = new Padding(0);
+            this.StartPosition = FormStartPosition.CenterScreen;
         }
 
         private void CheckUserSession()
         {
-            // Check if user is logged in
             if (!UserSession.IsLoggedIn)
             {
                 MessageBox.Show(
@@ -72,6 +76,25 @@ namespace Project_PBO.View
             btnJenisAktivitas.Visible = isAdmin;
         }
 
+        private void Container_Load(object sender, EventArgs e)
+        {
+            UpdateMenuAccess();
+            SetGreeting();
+
+            btnDashboard_Click(null, EventArgs.Empty);
+        }
+
+        private void btnDashboard_Click(object sender, EventArgs e)
+        {
+            SidebarActive.MenuActive = "Dashboard";
+            CheckActiveSidebar();
+
+            panelContent.Controls.Clear();
+            DashboardAdmin dashboard = new DashboardAdmin();
+            dashboard.Dock = DockStyle.Fill;
+            panelContent.Controls.Add(dashboard);
+        }
+
         private void btnAkun_Click(object sender, EventArgs e)
         {
             if (!UserSession.IsAdmin())
@@ -84,6 +107,8 @@ namespace Project_PBO.View
                 );
                 return;
             }
+            SidebarActive.MenuActive = "Akun";
+            CheckActiveSidebar();
 
             panelContent.Controls.Clear();
             AkunIndex akun = new AkunIndex();
@@ -103,6 +128,8 @@ namespace Project_PBO.View
                 );
                 return;
             }
+            SidebarActive.MenuActive = "Lahan";
+            CheckActiveSidebar();
 
             panelContent.Controls.Clear();
             LahanIndex lahan = new LahanIndex();
@@ -122,6 +149,8 @@ namespace Project_PBO.View
                 );
                 return;
             }
+            SidebarActive.MenuActive = "Tanaman";
+            CheckActiveSidebar();
 
             panelContent.Controls.Clear();
             TanamanIndex tanaman = new TanamanIndex();
@@ -141,6 +170,8 @@ namespace Project_PBO.View
                 );
                 return;
             }
+            SidebarActive.MenuActive = "JenisAktivitas";
+            CheckActiveSidebar();
 
             panelContent.Controls.Clear();
             JenisAktivitasIndex jenisAktivitas = new JenisAktivitasIndex();
@@ -150,6 +181,9 @@ namespace Project_PBO.View
 
         private void btnPenanaman_Click(object sender, EventArgs e)
         {
+            SidebarActive.MenuActive = "Penanaman";
+            CheckActiveSidebar();
+
             panelContent.Controls.Clear();
             PenanamanIndex penanaman = new PenanamanIndex();
             penanaman.Dock = DockStyle.Fill;
@@ -175,16 +209,6 @@ namespace Project_PBO.View
             }
         }
 
-        private void Container_Load(object sender, EventArgs e)
-        {
-            UpdateMenuAccess();
-            SetGreeting();
-
-            panelContent.Controls.Clear();
-            DashboardAdmin dashboard = new DashboardAdmin();
-            dashboard.Dock = DockStyle.Fill;
-            panelContent.Controls.Add(dashboard);
-        }
 
         private void SetGreeting()
         {
@@ -212,12 +236,74 @@ namespace Project_PBO.View
             lblGreeting.Text = $"Selamat {timeOfDayGreeting}, {username}!";
         }
 
-        private void btnDashboard_Click(object sender, EventArgs e)
+        private void CheckActiveSidebar()
         {
-            panelContent.Controls.Clear();
-            DashboardAdmin dashboard = new DashboardAdmin();
-            dashboard.Dock = DockStyle.Fill;
-            panelContent.Controls.Add(dashboard);
+            // Reset all buttons to default state first
+            ResetAllButtonsToDefault();
+
+            string activeMenu = SidebarActive.MenuActive;
+            Color activeColor = Color.DodgerBlue;
+
+            // Set the active button based on current menu
+            if (activeMenu == "Dashboard")
+            {
+                btnDashboard.BackColor = activeColor;
+                btnDashboard.HoverColor = activeColor;
+            }
+            else if (activeMenu == "Akun")
+            {
+                btnAkun.BackColor = activeColor;
+                btnAkun.HoverColor = activeColor;
+            }
+            else if (activeMenu == "Lahan")
+            {
+                btnLahan.BackColor = activeColor;
+                btnLahan.HoverColor = activeColor;
+            }
+            else if (activeMenu == "Tanaman")
+            {
+                btnTanaman.BackColor = activeColor;
+                btnTanaman.HoverColor = activeColor;
+            }
+            else if (activeMenu == "JenisAktivitas")
+            {
+                btnJenisAktivitas.BackColor = activeColor;
+                btnJenisAktivitas.HoverColor = activeColor;
+            }
+            else if (activeMenu == "Penanaman")
+            {
+                btnPenanaman.BackColor = activeColor;
+                btnPenanaman.HoverColor = activeColor;
+            }
+        }
+
+        private void ResetAllButtonsToDefault()
+        {
+            Color defaultBackColor = Color.FromArgb(64, 64, 64); // or whatever your default color is
+            Color defaultHoverColor = Color.DodgerBlue; // or whatever your default hover color is
+
+            btnDashboard.BackColor = defaultBackColor;
+            btnDashboard.HoverColor = defaultHoverColor;
+
+            btnAkun.BackColor = defaultBackColor;
+            btnAkun.HoverColor = defaultHoverColor;
+
+            btnLahan.BackColor = defaultBackColor;
+            btnLahan.HoverColor = defaultHoverColor;
+
+            btnTanaman.BackColor = defaultBackColor;
+            btnTanaman.HoverColor = defaultHoverColor;
+
+            btnJenisAktivitas.BackColor = defaultBackColor;
+            btnJenisAktivitas.HoverColor = defaultHoverColor;
+
+            btnPenanaman.BackColor = defaultBackColor;
+            btnPenanaman.HoverColor = defaultHoverColor;
+        }
+
+        private void lblUsername_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

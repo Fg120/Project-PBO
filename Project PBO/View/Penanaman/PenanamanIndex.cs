@@ -18,6 +18,7 @@ namespace Project_PBO.View
         public PenanamanIndex()
         {
             InitializeComponent();
+            LoadPenanamanData();
         }
 
         private void LoadPenanamanData()
@@ -153,6 +154,11 @@ namespace Project_PBO.View
                     }
                 }
             }
+        }
+
+        private void labelDataPenanaman_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

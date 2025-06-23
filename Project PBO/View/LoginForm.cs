@@ -12,11 +12,12 @@ namespace Project_PBO.View
         public LoginForm()
         {
             InitializeComponent();
+            this.StartPosition = FormStartPosition.CenterScreen;
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            string username = txtUsername.Text.Trim();
+            string username = txtUsername.Text;
             string password = txtPassword.Text;
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
@@ -32,7 +33,7 @@ namespace Project_PBO.View
 
             try
             {
-                AkunModel? user = AkunController.Login(username, password);
+                AkunModel? user = AkunController.Login(username.Trim(), password.Trim());
 
                 if (user != null && user.IsActive)
                 {
@@ -80,7 +81,5 @@ namespace Project_PBO.View
                 );
             }
         }
-
-        private void LoginForm_Load(object sender, EventArgs e) { }
     }
 }

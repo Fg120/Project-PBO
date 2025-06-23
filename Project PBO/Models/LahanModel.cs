@@ -116,6 +116,28 @@ namespace Project_PBO.Models
             return lahanList;
         }
 
+        public static List<LahanModel> GetAllAvailable()
+        {
+            List<LahanModel> lahanList = new List<LahanModel>();
+            using var conn = DbContext.GetConnection();
+            conn.Open();
+            string query = "SELECT l.* FROM lahan l WHERE is_active = true AND NOT EXISTS (SELECT 1 FROM penanaman p WHERE p.id_lahan = l.id_lahan AND p.status NOT IN ('Selesai', 'Dibatalkan', 'Gagal'));";
+            using var cmd = new NpgsqlCommand(query, conn);
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                LahanModel lahan = new LahanModel(
+                    reader.GetInt32(0), // IdLahan
+                    reader.GetString(1), // Nama
+                    reader.GetInt32(2), // Luas
+                    reader.GetString(3), // Lokasi
+                    reader.GetBoolean(4) // IsActive
+                );
+                lahanList.Add(lahan);
+            }
+            return lahanList;
+        }
+
         public static LahanModel? FindById(int IdLahan)
         {
             LahanModel? lahan = null;

@@ -22,7 +22,7 @@ namespace Project_PBO.View
             this.FormBorderStyle = FormBorderStyle.None; // Remove window header
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.StartPosition = FormStartPosition.CenterScreen; // Center the form on screen
             this.BackColor = Color.FromArgb(255, 242, 225); // Common background color
             this.TransparencyKey = Color.FromArgb(255, 242, 225);
             this.Size = new Size(820, 280); // Consistent size with other new forms

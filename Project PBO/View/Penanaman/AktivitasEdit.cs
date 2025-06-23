@@ -23,20 +23,12 @@ namespace Project_PBO.View.Penanaman
             this.FormBorderStyle = FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(255, 242, 225);
             this.TransparencyKey = Color.FromArgb(255, 242, 225);
             this.Size = new Size(818, 600);
             this.id_aktivitas = id_aktivitas;
         }
-
-        private void inputNama_Click(object sender, EventArgs e) { }
-
-        private void materialLabel1_Click(object sender, EventArgs e) { }
-
-        private void inputJenisAktivitas_SelectedIndexChanged(object sender, EventArgs e) { }
-
-        private void dateTanggalTanam_ValueChanged(object sender, EventArgs e) { }
 
         private void AktivitasEdit_Load(object sender, EventArgs e)
         {

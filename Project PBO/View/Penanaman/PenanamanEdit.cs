@@ -24,7 +24,7 @@ namespace Project_PBO.View
             this.FormBorderStyle = FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(255, 242, 225);
             this.TransparencyKey = Color.FromArgb(255, 242, 225);
             this.Size = new Size(818, 600);
@@ -33,19 +33,30 @@ namespace Project_PBO.View
             originalPenanaman = penanaman;
         }
 
-        private void dateTanggalTanam_ValueChanged(object? sender, EventArgs e)
-        {
-            dateTanggalPanen.MinDate = dateTanggalTanam.Value;
+        //private void dateTanggalTanam_ValueChanged(object? sender, EventArgs e)
+        //{
+        //    dateTanggalPanen.MinDate = dateTanggalTanam.Value;
 
-            if (dateTanggalPanen.Checked && dateTanggalPanen.Value < dateTanggalTanam.Value)
-            {
-                dateTanggalPanen.Value = dateTanggalTanam.Value.AddMonths(1);
-            }
-        }
+        //    if (dateTanggalPanen.Checked && dateTanggalPanen.Value < dateTanggalTanam.Value)
+        //    {
+        //        dateTanggalPanen.Value = dateTanggalTanam.Value.AddMonths(1);
+        //    }
+        //}
 
         private void PenanamanEdit_Load(object? sender, EventArgs e)
         {
-            var lahanList = LahanController.GetAllLahan();
+            var lahanList = LahanController.GetAllAvailableLahan();
+            var currentLahan = LahanController.GetLahanById(originalPenanaman.IdLahan);
+
+            if (currentLahan != null && !lahanList.Any(l => l.IdLahan == currentLahan.IdLahan))
+            {
+                lahanList.Insert(0, currentLahan);
+            }
+
+            comboLahan.DisplayMember = "Nama";
+            comboLahan.ValueMember = "IdLahan";
+            comboLahan.DataSource = lahanList;
+            comboLahan.SelectedValue = originalPenanaman.IdLahan;
             comboLahan.DisplayMember = "Nama";
             comboLahan.ValueMember = "IdLahan";
             comboLahan.DataSource = lahanList;
@@ -57,43 +68,63 @@ namespace Project_PBO.View
             comboTanaman.DataSource = tanamanList;
             comboTanaman.SelectedValue = originalPenanaman.IdTanaman;
 
-            dateTanggalTanam.MinDate = new DateTime(1753, 1, 1);
-            dateTanggalTanam.MaxDate = new DateTime(9998, 12, 31);
             dateTanggalTanam.Value = originalPenanaman.TanggalTanam.ToDateTime(TimeOnly.MinValue);
-
-            dateTanggalPanen.MinDate = dateTanggalTanam.Value;
-
-            if (originalPenanaman.TanggalPanen.HasValue)
-            {
-                dateTanggalPanen.Checked = true;
-                if (
-                    originalPenanaman.TanggalPanen.Value.ToDateTime(TimeOnly.MinValue)
-                    < dateTanggalTanam.Value
-                )
-                {
-                    dateTanggalPanen.Value = dateTanggalTanam.Value.AddMonths(1);
-                }
-                else
-                {
-                    dateTanggalPanen.Value = originalPenanaman.TanggalPanen.Value.ToDateTime(
-                        TimeOnly.MinValue
-                    );
-                }
-            }
-            else
-            {
-                dateTanggalPanen.Checked = false;
-                dateTanggalPanen.Value = dateTanggalTanam.Value.AddMonths(1);
-            }
 
             txtHasilPanen.Text = originalPenanaman.HasilPanen?.ToString() ?? "";
             txtCatatan.Text = originalPenanaman.Catatan ?? "";
+
+            if (originalPenanaman.TanggalPanen.HasValue)
+            {
+                dateTanggalPanen.Value = originalPenanaman.TanggalPanen.Value.ToDateTime(TimeOnly.MinValue);
+            }
+
+            // Atur status default kontrol, sebagian besar dinonaktifkan.
+            dateTanggalTanam.Enabled = false;
+            dateTanggalPanen.Enabled = false;
+            txtHasilPanen.Enabled = false;
+            comboLahan.Enabled = false;
+            comboTanaman.Enabled = false;
+            comboStatus.Enabled = true;
             comboStatus.Items.Clear();
-            comboStatus.Items.Add("Direncanakan");
-            comboStatus.Items.Add("Aktif");
-            comboStatus.Items.Add("Dipanen");
-            comboStatus.Items.Add("Selesai");
-            comboStatus.Items.Add("Dibatalkan");
+
+            // Konfigurasi UI berdasarkan status penanaman saat ini.
+            switch (originalPenanaman.Status)
+            {
+                case "Direncanakan":
+                    dateTanggalTanam.Enabled = true;
+                    comboLahan.Enabled = true;
+                    comboTanaman.Enabled = true;
+                    dateTanggalTanam.MinDate = DateTime.Today.AddDays(-30);
+                    dateTanggalTanam.MaxDate = DateTime.Today.AddDays(30);
+                    comboStatus.Items.AddRange(new[] { "Direncanakan", "Aktif", "Dibatalkan" });
+                    break;
+
+                case "Aktif":
+                    comboStatus.Items.AddRange(new[] { "Aktif", "Dipanen", "Gagal" });
+                    break;
+
+                case "Dipanen":
+                    txtHasilPanen.Enabled = true;
+                    dateTanggalPanen.Enabled = true;
+                    dateTanggalPanen.MinDate = originalPenanaman.TanggalTanam.ToDateTime(TimeOnly.MinValue);
+                    dateTanggalPanen.MaxDate = DateTime.Today.AddDays(14);
+                    comboStatus.Items.AddRange(new[] { "Dipanen", "Selesai" });
+                    break;
+
+                case "Selesai":
+                case "Dibatalkan":
+                case "Gagal":
+                    comboStatus.Items.Add(originalPenanaman.Status);
+                    comboStatus.Enabled = false;
+                    break;
+            }
+
+            //comboStatus.Items.Clear();
+            //comboStatus.Items.Add("Direncanakan");
+            //comboStatus.Items.Add("Aktif");
+            //comboStatus.Items.Add("Dipanen");
+            //comboStatus.Items.Add("Selesai");
+            //comboStatus.Items.Add("Dibatalkan");
             comboStatus.SelectedItem = originalPenanaman.Status;
         }
 
@@ -164,6 +195,37 @@ namespace Project_PBO.View
                     : txtCatatan.Text.Trim();
                 string statusString =
                     comboStatus.SelectedItem?.ToString() ?? originalPenanaman.Status;
+
+                if (originalPenanaman.Status == "Dipanen")
+                {
+                    if (!tanggalPanen.HasValue)
+                    {
+                        MessageBox.Show(
+                            "Tanggal panen harus diisi untuk status 'Dipanen' atau 'Selesai'.",
+                            "Validasi Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        );
+                        return;
+                    }
+                    if (!hasilPanen.HasValue)
+                    {
+                        MessageBox.Show(
+                            "Hasil panen harus diisi untuk status 'Dipanen' atau 'Selesai'.",
+                            "Validasi Error",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        );
+                        return;
+                    }
+                }
+                else
+                {
+                    tanggalPanen = null;
+                    hasilPanen = null;
+                }
+
+
                 originalPenanaman.IdLahan = idLahan;
                 originalPenanaman.IdTanaman = idTanaman;
                 originalPenanaman.TanggalTanam = tanggalTanam;

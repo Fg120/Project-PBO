@@ -21,7 +21,7 @@ namespace Project_PBO.View
             this.FormBorderStyle = FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(255, 242, 225);
             this.TransparencyKey = Color.FromArgb(255, 242, 225);
             this.Size = new Size(820, 280);
@@ -67,6 +67,18 @@ namespace Project_PBO.View
             }
             try
             {
+                AkunModel findByUsername = AkunController.GetAkunByUsername(username);
+                if (findByUsername != null)
+                {
+                    MessageBox.Show(
+                        "Username sudah digunakan. Silakan pilih username lain.",
+                        "Validasi Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                    return;
+                }
+
                 bool isAdded = AkunController.AddAkun(
                     new AkunModel
                     {

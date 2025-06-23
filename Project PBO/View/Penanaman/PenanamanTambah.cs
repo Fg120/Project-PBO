@@ -21,7 +21,7 @@ namespace Project_PBO.View
             this.FormBorderStyle = FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(255, 242, 225);
             this.TransparencyKey = Color.FromArgb(255, 242, 225);
             this.Size = new Size(818, 600);
@@ -29,7 +29,7 @@ namespace Project_PBO.View
 
         private void PenanamanTambah_Load(object? sender, EventArgs e)
         {
-            var lahanList = LahanController.GetAllActiveLahan();
+            var lahanList = LahanController.GetAllAvailableLahan();
             comboLahan.DisplayMember = "Nama";
             comboLahan.ValueMember = "IdLahan";
             comboLahan.DataSource = lahanList;
@@ -43,34 +43,28 @@ namespace Project_PBO.View
             if (comboTanaman.Items.Count > 0)
                 comboTanaman.SelectedIndex = 0;
 
+            dateTanggalTanam.Enabled = false;
             dateTanggalTanam.Value = DateTime.Today;
 
             comboStatus.Items.Clear();
             comboStatus.Items.Add("Direncanakan");
             comboStatus.Items.Add("Aktif");
-            comboStatus.Items.Add("Dipanen");
-            comboStatus.Items.Add("Selesai");
-            comboStatus.Items.Add("Dibatalkan");
-            comboStatus.SelectedIndex = 0;
-
-            dateTanggalPanen.Value = DateTime.Today.AddMonths(1);
-            dateTanggalPanen.Checked = false;
-            dateTanggalPanen.MinDate = dateTanggalTanam.Value;
+            //comboStatus.SelectedIndex = 0;
         }
 
-        private void dateTanggalTanam_ValueChanged(object? sender, EventArgs e)
+        private void comboStatus_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            if (dateTanggalPanen.Checked)
+            if (comboStatus.SelectedItem?.ToString() == "Direncanakan")
             {
-                dateTanggalPanen.MinDate = dateTanggalTanam.Value;
-                if (dateTanggalPanen.Value < dateTanggalTanam.Value)
-                {
-                    dateTanggalPanen.Value = dateTanggalTanam.Value.AddMonths(1);
-                }
+                dateTanggalTanam.Enabled = true;
+                dateTanggalTanam.MinDate = DateTime.Today;
+                dateTanggalTanam.MaxDate = DateTime.Today.AddDays(14);
             }
-            else
+            else if (comboStatus.SelectedItem?.ToString() == "Aktif")
             {
-                dateTanggalPanen.MinDate = dateTanggalTanam.Value;
+                dateTanggalTanam.Enabled |= true;
+                dateTanggalTanam.MaxDate = DateTime.Today;
+                dateTanggalTanam.MinDate = DateTime.Today.AddDays(-14);
             }
         }
 
@@ -113,28 +107,6 @@ namespace Project_PBO.View
                 int idTanaman = (int)comboTanaman.SelectedValue;
 
                 DateOnly tanggalTanam = DateOnly.FromDateTime(dateTanggalTanam.Value);
-                DateOnly? tanggalPanen = dateTanggalPanen.Checked
-                    ? DateOnly.FromDateTime(dateTanggalPanen.Value)
-                    : null;
-
-                decimal? hasilPanen = null;
-                if (!string.IsNullOrWhiteSpace(txtHasilPanen.Text))
-                {
-                    if (decimal.TryParse(txtHasilPanen.Text, out decimal hasil) && hasil > 0)
-                    {
-                        hasilPanen = hasil;
-                    }
-                    else
-                    {
-                        MessageBox.Show(
-                            "Hasil panen harus angka positif jika diisi.",
-                            "Validasi Error",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Warning
-                        );
-                        return;
-                    }
-                }
 
                 string? catatan = string.IsNullOrWhiteSpace(txtCatatan.Text)
                     ? null
@@ -148,8 +120,8 @@ namespace Project_PBO.View
                         IdLahan = idLahan,
                         IdTanaman = idTanaman,
                         TanggalTanam = tanggalTanam,
-                        TanggalPanen = tanggalPanen,
-                        HasilPanen = hasilPanen,
+                        TanggalPanen = null,
+                        HasilPanen = null,
                         Catatan = catatan ?? string.Empty,
                         Status = status,
                     }
@@ -194,16 +166,6 @@ namespace Project_PBO.View
                     MessageBoxIcon.Error
                 );
             }
-        }
-
-        private void comboLahan_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtHasilPanen_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

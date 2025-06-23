@@ -168,6 +168,28 @@ namespace Project_PBO.Models
             return akun;
         }
 
+        public static AkunModel? FindByUsername(string Username)
+        {
+            AkunModel? akun = null;
+            using var conn = DbContext.GetConnection();
+            conn.Open();
+            string query = "SELECT * FROM akun WHERE username = @username";
+            using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("username", Username);
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                akun = new AkunModel(
+                    reader.GetInt32(0), // IdAkun
+                    reader.GetString(1), // Username
+                    reader.GetString(2), // Password
+                    reader.GetString(3), // Role
+                    reader.GetBoolean(4) // IsActive
+                );
+            }
+            return akun;
+        }
+
         public bool Insert(AkunModel akun)
         {
             using (var conn = DbContext.GetConnection())

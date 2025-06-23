@@ -17,6 +17,7 @@ namespace Project_PBO.View
     public partial class PenanamanDetail : UserControl
     {
         private int id_penanaman;
+        private string statusPenanaman;
         public event EventHandler? KembaliClicked;
         private string AkunRole = UserSession.Role;
 
@@ -30,6 +31,13 @@ namespace Project_PBO.View
             colIdAktivitas.HeaderText = "ID Aktivitas";
             colIdAktivitas.DataPropertyName = "IdAktivitas";
             dgAktivitas.Grid.Columns.Add(colIdAktivitas);
+
+            var colIdAkun = new DataGridViewTextBoxColumn();
+            colIdAkun.Name = "IdAkun";
+            colIdAkun.HeaderText = "ID Akun";
+            colIdAkun.DataPropertyName = "IdAkun";
+            colIdAkun.Visible = false; // Sembunyikan kolom ID Akun
+            dgAktivitas.Grid.Columns.Add(colIdAkun);
 
             var colNamaJenisAktivitas = new DataGridViewTextBoxColumn();
             colNamaJenisAktivitas.Name = "NamaJenisAktivitas";
@@ -93,7 +101,7 @@ namespace Project_PBO.View
             btnKembali.Click += (s, e) => KembaliClicked?.Invoke(this, EventArgs.Empty);
         }
 
-        public void btnEdit_Click(object sender, EventArgs e)
+        public void btnEditPenanaman_Click(object sender, EventArgs e)
         {
             PenanamanModel? penanaman = PenanamanController.GetPenanamanById(id_penanaman);
             if (penanaman != null)
@@ -107,6 +115,21 @@ namespace Project_PBO.View
                         LoadDetailPenanaman(id_penanaman);
                     }
                 }
+            }
+        }
+
+        public void LoadBtn(string Status)
+        {
+            if (Status == "Aktif" || Status == "Dipanen")
+            {
+                btnTambahAktivitas.Enabled = true;
+            }
+            else
+            {
+                btnTambahAktivitas.Enabled = false;
+                btnTambahAktivitas.Click += null;
+                btnTambahAktivitas.BackColor = Color.FromArgb(64, 64, 64);
+                btnTambahAktivitas.HoverColor = Color.FromArgb(64, 64, 64);
             }
         }
 
@@ -128,6 +151,8 @@ namespace Project_PBO.View
                     ? "Tidak ada catatan"
                     : penanaman.Catatan;
                 dtlStatus.Text = penanaman.Status;
+                LoadBtn(penanaman.Status);
+                statusPenanaman = penanaman.Status;
             }
         }
 
@@ -176,6 +201,16 @@ namespace Project_PBO.View
                     && dgAktivitas.Grid.Rows[e.RowIndex].Cells["IdAktivitas"].Value != null
                 )
                 {
+                    if (UserSession.CurrentUser.IdAkun != Convert.ToInt32(dgAktivitas.Grid.Rows[e.RowIndex].Cells["IdAkun"].Value))
+                    {
+                        MessageBox.Show(
+                            "Anda tidak bisa mengedit aktivitas ini karena bukan milik Anda.",
+                            "Akses Ditolak",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        );
+                        return;
+                    }
                     int idAktivitas = Convert.ToInt32(
                         dgAktivitas.Grid.Rows[e.RowIndex].Cells["IdAktivitas"].Value
                     );
@@ -188,6 +223,7 @@ namespace Project_PBO.View
                             if (editAktivitasForm.DialogResult == DialogResult.OK)
                             {
                                 LoadAktivitasData();
+                                LoadBtn(statusPenanaman);
                             }
                         }
                     }
@@ -235,6 +271,21 @@ namespace Project_PBO.View
                     }
                 }
             }
+        }
+
+        private void materialCard1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

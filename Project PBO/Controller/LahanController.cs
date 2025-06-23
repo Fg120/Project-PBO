@@ -20,6 +20,11 @@ namespace Project_PBO.Controller
             return LahanModel.GetAllActive();
         }
 
+        public static List<LahanModel> GetAllAvailableLahan()
+        {
+            return LahanModel.GetAllAvailable();
+        }
+
         public static LahanModel? GetLahanById(int idLahan)
         {
             return LahanModel.FindById(idLahan);

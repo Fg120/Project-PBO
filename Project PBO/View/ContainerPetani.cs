@@ -23,6 +23,9 @@ namespace Project_PBO.View
             {
                 SetGreeting();
             }
+
+            cardApp.Padding = new Padding(0);
+            this.StartPosition = FormStartPosition.CenterScreen;
         }
 
         private void ContainerPetani_Load(object sender, EventArgs e)
@@ -100,6 +103,11 @@ namespace Project_PBO.View
                 loginForm.ShowDialog();
                 this.Close();
             }
+        }
+
+        private void lblGreeting_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

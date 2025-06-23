@@ -24,7 +24,7 @@ namespace Project_PBO.View
             this.FormBorderStyle = FormBorderStyle.None; // Remove window header
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.StartPosition = FormStartPosition.CenterParent;
+            this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(255, 242, 225); // Match LahanEdit
             this.TransparencyKey = Color.FromArgb(255, 242, 225); // Match LahanEdit
             this.Size = new Size(820, 280); // Match TanamanTambah

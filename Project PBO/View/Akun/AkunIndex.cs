@@ -153,6 +153,16 @@ namespace Project_PBO.View
             else if (e.ColumnIndex == dgAkun.Grid.Columns["btnHapus"].Index)
             {
                 int idAkun = Convert.ToInt32(dgAkun.Grid.Rows[e.RowIndex].Cells["IdAkun"].Value);
+                if (UserSession.CurrentUser.IdAkun == idAkun)
+                {
+                    MessageBox.Show(
+                        "Tidak dapat menghapus akun yang sedang digunakan saat ini.",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                    return;
+                }
                 AkunModel? akun = AkunController.GetAkunById(idAkun);
                 if (
                     akun != null

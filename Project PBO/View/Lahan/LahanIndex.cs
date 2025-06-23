@@ -79,7 +79,7 @@ namespace Project_PBO.View
 
             var colIsActive = new DataGridViewTextBoxColumn();
             colIsActive.Name = "IsActive";
-            colIsActive.HeaderText = "Status";
+            colIsActive.HeaderText = "Aktif";
             colIsActive.DataPropertyName = "IsActive";
             dgLahan.Grid.Columns.Add(colIsActive);
 

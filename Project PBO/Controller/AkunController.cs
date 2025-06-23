@@ -29,6 +29,11 @@ namespace Project_PBO.Controller
             return AkunModel.FindById(idAkun);
         }
 
+        public static AkunModel? GetAkunByUsername(string username)
+        {
+            return AkunModel.FindByUsername(username);
+        }
+
         public static bool AddAkun(AkunModel akun)
         {
             return akun.Insert(akun);
